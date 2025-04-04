@@ -16,6 +16,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    // New field: Stores each game played by the user.
+    gameHistory: [
+      {
+        opponent: { type: String, required: true },
+        result: { type: String, required: true }, // e.g., 'win' or 'loss'
+        playedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   {
     timestamps: true,

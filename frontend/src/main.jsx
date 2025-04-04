@@ -15,6 +15,8 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen.jsx';
 import RegisterScreen from './screens/RegisterScreen.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
+import GameLobby from './screens/GameLobby.jsx';  // Import GameLobby Component
+import GameHistory from './screens/GameHistory.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 
 const router = createBrowserRouter(
@@ -25,6 +27,8 @@ const router = createBrowserRouter(
       <Route path='/register' element={<RegisterScreen />} />
       <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<ProfileScreen />} />
+        <Route path='/game-lobby' element={<GameLobby />} /> {/* NEW ROUTE */}
+        <Route path='/game-history' element={<GameHistory />} />
       </Route>
     </Route>
   )

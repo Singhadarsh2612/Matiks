@@ -41,6 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password,
+    gameHistory: [], // ✅ Initialize game history for new users
   });
 
   if (user) {
@@ -112,10 +113,80 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 });
+
+// ------------------------------------------------------------------
+// New Functionality for Game History
+
+// @desc    Get user's game history
+// @route   GET /api/users/history
+// @access  Private
+const getGameHistory = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select('gameHistory');
+  
+  if (user) {
+    // Add game numbers and format dates for better client-side display
+    const formattedHistory = user.gameHistory.map((game, index) => ({
+      gameNo: index + 1,
+      opponent: game.opponent,
+      result: game.result,
+      playedAt: game.playedAt || game.timestamp, // Handle both field names
+      _id: game._id
+    }));
+    
+    res.json({
+      success: true,
+      count: formattedHistory.length,
+      history: formattedHistory
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+// @desc    Update user's game history after a game
+// @route   POST /api/users/profile/history
+// @access  Private
+// @desc    Update user's game history after a game
+// @route   POST /api/users/profile/history
+// @access  Private
+const updateGameHistory = asyncHandler(async (req, res) => {
+  const { opponent, userResult } = req.body; // Changed from 'result' to 'userResult'
+  
+  if (!opponent || !userResult) {
+    res.status(400);
+    throw new Error('Please provide opponent and userResult');
+  }
+
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const gameRecord = {
+      opponent,
+      result: userResult, // Now stores the user's actual result (WIN/LOSS)
+      playedAt: new Date(),
+      _id: new mongoose.Types.ObjectId()
+    };
+
+    user.gameHistory.unshift(gameRecord); // Fixes ordering simultaneously
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      gameRecord
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+// ------------------------------------------------------------------
+
 export {
   authUser,
   registerUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getGameHistory,
+  updateGameHistory,
 };
