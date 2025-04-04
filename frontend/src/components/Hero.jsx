@@ -1,7 +1,7 @@
 import { Container, Card, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import Dashboard from '../pages/DashboardScreen';
 const Hero = () => {
   const navigate = useNavigate();
   const { userInfo } = useSelector((state) => state.auth); // Get logged-in user
@@ -28,19 +28,20 @@ const Hero = () => {
               </>
             ) : (
               <>
-                <Button
+                {/* <Button
                   variant='success'
                   className='me-3'
                   onClick={() => navigate('/game-lobby')}
                 >
                   Go to Game Lobby
-                </Button>
-                <Button
+                </Button> */}
+                <Dashboard/>
+                {/* <Button
                   variant='info'
                   onClick={() => navigate('/game-history')} // Navigate to history page
                 >
                   View Game History
-                </Button>
+                </Button> */}
               </>
             )}
           </div>

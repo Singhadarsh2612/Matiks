@@ -18,7 +18,7 @@ import ProfileScreen from './screens/ProfileScreen.jsx';
 import GameLobby from './screens/GameLobby.jsx';
 import GameHistory from './screens/GameHistory.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
-
+import Home from './Home.jsx';
 // Import new screen components
 import DashboardScreen from './pages/DashboardScreen.jsx';
 import FindMatchScreen from './pages/FindMatchScreen.jsx';
@@ -29,7 +29,7 @@ import LeaderboardScreen from './pages/LeaderboardScreen.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
-      <Route index={true} path='/' element={<HomeScreen />} />
+      <Route index={true}  element={<HomeScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
       <Route path='' element={<PrivateRoute />}>
@@ -41,7 +41,7 @@ const router = createBrowserRouter(
         <Route path='/dashboard' element={<DashboardScreen />} />
         <Route path='/find-match' element={<FindMatchScreen />} />
         <Route path='/practice' element={<PracticeScreen />} />
-        <Route path='/play-with-friend' element={<PlayWithFriendScreen />} />
+        <Route path='/play-with-friend' element={<GameLobby />} />
         <Route path='/leaderboard' element={<LeaderboardScreen />} />
       </Route>
     </Route>

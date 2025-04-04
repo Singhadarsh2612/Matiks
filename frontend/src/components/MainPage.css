@@ -1,0 +1,112 @@
+.hero-section {
+    width: 75%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 4rem;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/src/assets/math-bg.jpg') center/cover no-repeat;
+    color: white;
+  }
+  
+  .hero-box {
+    background: rgba(0, 0, 40, 0.75);
+    border-radius: 12px;
+    padding: 3rem;
+    max-width: 700px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .logo {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text; /* ✅ non-prefixed for future support */
+    color: transparent;     /* fallback to make sure text is transparent */
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .cta-button {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .primary-button {
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    color: white;
+    border: none;
+  }
+  
+  .primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 114, 255, 0.4);
+  }
+  
+  .secondary-button {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+  }
+  
+  .secondary-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .features {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .feature-icon {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+  }
+  
+  @media (max-width: 1024px) {
+    .hero-section {
+      width: 100%;
+      height: auto;
+      min-height: 70vh;
+      padding: 3rem 2rem;
+    }
+  }
