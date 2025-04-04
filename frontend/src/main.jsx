@@ -15,9 +15,16 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen.jsx';
 import RegisterScreen from './screens/RegisterScreen.jsx';
 import ProfileScreen from './screens/ProfileScreen.jsx';
-import GameLobby from './screens/GameLobby.jsx';  // Import GameLobby Component
+import GameLobby from './screens/GameLobby.jsx';
 import GameHistory from './screens/GameHistory.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+
+// Import new screen components
+import DashboardScreen from './pages/DashboardScreen.jsx';
+import FindMatchScreen from './pages/FindMatchScreen.jsx';
+import PracticeScreen from './pages/PracticeScreen.jsx';
+import PlayWithFriendScreen from './pages/PlayWithFriendScreen.jsx';
+import LeaderboardScreen from './pages/LeaderboardScreen.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,8 +34,15 @@ const router = createBrowserRouter(
       <Route path='/register' element={<RegisterScreen />} />
       <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<ProfileScreen />} />
-        <Route path='/game-lobby' element={<GameLobby />} /> {/* NEW ROUTE */}
+        <Route path='/game-lobby' element={<GameLobby />} />
         <Route path='/game-history' element={<GameHistory />} />
+        
+        {/* New routes for sidebar navigation */}
+        <Route path='/dashboard' element={<DashboardScreen />} />
+        <Route path='/find-match' element={<FindMatchScreen />} />
+        <Route path='/practice' element={<PracticeScreen />} />
+        <Route path='/play-with-friend' element={<PlayWithFriendScreen />} />
+        <Route path='/leaderboard' element={<LeaderboardScreen />} />
       </Route>
     </Route>
   )

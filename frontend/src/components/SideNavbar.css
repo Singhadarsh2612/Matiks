@@ -1,0 +1,134 @@
+.side-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 240px;
+    background-color: #2f3136;
+    color: #dcddde;
+    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .logo-container {
+    padding: 20px;
+    border-bottom: 1px solid #40444b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logo-container h3 {
+    color: #fff;
+    margin: 0;
+    font-weight: 600;
+  }
+  
+  .nav-menu {
+    padding: 12px 0;
+  }
+  
+  .nav-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .nav-menu li {
+    margin: 4px 0;
+  }
+  
+  .nav-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: #b9bbbe;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    margin: 0 8px;
+  }
+  
+  .nav-menu a:hover {
+    background-color: #36393f;
+    color: #fff;
+  }
+  
+  .nav-menu a.active {
+    background-color: #5865f2;
+    color: #fff;
+  }
+  
+  .icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+  }
+  
+  .sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #5865f2;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+  }
+  
+  .content-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+  }
+  
+  .content-overlay.active {
+    display: block;
+  }
+  
+  /* Main content positioning */
+  .main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 991px) {
+    .side-navbar {
+      transform: translateX(-100%);
+    }
+    
+    .side-navbar.open {
+      transform: translateX(0);
+    }
+    
+    .sidebar-toggle {
+      display: flex;
+    }
+  
+    .main-content {
+      margin-left: 0;
+      width: 100%;
+    }
+    
+    .main-content.sidebar-open {
+      margin-left: 240px;
+    }
+  }
