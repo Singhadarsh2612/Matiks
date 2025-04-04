@@ -14,7 +14,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 
 // Create HTTP server and attach Socket.io
 const server = http.createServer(app);

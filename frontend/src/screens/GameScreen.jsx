@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:5000"); // Change if needed
+const socket = io("http://localhost:5001"); // Change if needed
 
 const GameScreen = () => {
     const navigate = useNavigate();

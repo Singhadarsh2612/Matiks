@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 
-const socket = io("http://localhost:5000"); // Your backend URL
+const socket = io("http://localhost:5001"); // Your backend URL
 
 const GameLobby = () => {
   const navigate = useNavigate();
