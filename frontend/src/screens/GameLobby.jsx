@@ -22,7 +22,8 @@ const GameLobby = () => {
 
     // Reconnect user
     socket.emit("reconnectUser", userInfo.name);
-
+    //hi
+    
     socket.on("gameCreated", ({ gameId, players }) => {
       setGameId(gameId);
       setPlayers(players);
