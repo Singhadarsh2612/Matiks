@@ -10,11 +10,24 @@ const Hero = () => {
     <div className='py-5'>
       <Container className='d-flex justify-content-center'>
         <Card className='p-5 d-flex flex-column align-items-center hero-card bg-light w-75'>
-          <h1 className='text-center mb-4'>MERN Authentication</h1>
-          <p className='text-center mb-4'>
-            This is a boilerplate for MERN authentication that stores a JWT in
-            an HTTP-Only cookie. It also uses Redux Toolkit and the React
-            Bootstrap library.
+          <h1 className='text-center mb-4'>HectoClash</h1>
+          <p className='text-justified mb-4'>
+          Hectoc is a Mental Calculation game, developed by Yusnier Viera in the 2010s. Each question is a sequence of 6 digits, each 1–9.
+
+For example: 249384
+
+In hectoc, the aim is to use these numbers in order to find the number 100. Here are two solutions to this example:
+
+2 × (49 + 3 – 8/4) = 100
+(2 × 4 – 9 + 3)^(8/4) = 100
+The operations allowed when solving hectocs are:
+
+putting adjacent numbers together, like 4 and 9 to make 49
+addition, subtraction, multiplication and division
+adding negative symbols
+powers (like the ‘^’ in the second example above)
+brackets to manage the correct order of operations
+It is not allowed to rearrange numbers or use other symbols like square roots. You must use all the numbers.
           </p>
           <div className='d-flex'>
             {!userInfo ? (
@@ -35,7 +48,7 @@ const Hero = () => {
                 >
                   Go to Game Lobby
                 </Button> */}
-                <Dashboard/>
+                
                 {/* <Button
                   variant='info'
                   onClick={() => navigate('/game-history')} // Navigate to history page

@@ -49,6 +49,7 @@ if (process.env.NODE_ENV === 'production') {
 // Socket.io Game Logic
 const users = {}; // Store users with socket ID mapping
 const games = {}; // Store game sessions
+let waitingPair = [];
 
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
@@ -63,7 +64,47 @@ io.on("connection", (socket) => {
 
         console.log(`Game created: ${gameId} by ${username}`);
     });
-
+    
+    socket.on("findPair", (username) => {
+        if (waitingPair.length > 0) {
+            const waitingPlayer = waitingPair.shift();
+            const pairRoom = Math.random().toString(36).substr(2, 6);
+    
+            socket.join(pairRoom);
+            waitingPlayer.socket.join(pairRoom);
+    
+            const a = Math.floor(Math.random() * 10);
+            const b = Math.floor(Math.random() * 10);
+            const question = `${a} + ${b}`;
+            const correctAnswer = a + b;
+    
+            games[pairRoom] = {
+                players: [
+                    { id: waitingPlayer.socket.id, username: waitingPlayer.username },
+                    { id: socket.id, username }
+                ],
+                gameStarted: true,
+                mathProblem: { question, correctAnswer }
+            };
+    
+            users[socket.id] = { username, gameId: pairRoom };
+            users[waitingPlayer.socket.id] = { username: waitingPlayer.username, gameId: pairRoom };
+    
+            io.to(pairRoom).emit("pairFound", {
+                room: pairRoom,
+                players: [waitingPlayer.username, username],
+                message: "Pair found! Game is starting...",
+                mathProblem: question,
+            });
+    
+            console.log(`Pair matched: ${waitingPlayer.username} & ${username} in room ${pairRoom}`);
+        } else {
+            waitingPair.push({ socket, username });
+            socket.emit("waitingForPair", { message: "Finding a pair, please wait..." });
+            console.log(`${username} is waiting for a pair...`);
+        }
+    });
+    
     socket.on("joinGame", ({ gameId, username }) => {
         if (!games[gameId]) {
             socket.emit("errorMessage", "Game not found.");
@@ -171,6 +212,8 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         console.log(`User disconnected: ${socket.id}`);
+        // Remove from waitingPair if they were waiting for a stranger
+    waitingPair = waitingPair.filter(item => item.socket.id !== socket.id);
         if (users[socket.id]) {
             const { gameId, username } = users[socket.id];
 

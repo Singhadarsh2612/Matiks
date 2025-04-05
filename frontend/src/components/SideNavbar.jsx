@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaSearch, FaDumbbell, FaUserFriends, FaTrophy, FaBars, FaTimes } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import './SideNavbar.css';
 
 const SideNavbar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
-  
+  const navigate = useNavigate();
+
   const closeSidebar = () => {
     if (window.innerWidth < 992) {
       toggleSidebar();
@@ -27,7 +29,8 @@ const SideNavbar = ({ isOpen, toggleSidebar }) => {
       </div>
       
       <div className={`side-navbar ${isOpen ? 'open' : ''}`}>
-        <div className="logo-container">
+        <div className="logo-container" onClick={() => navigate('/')}
+  style={{ cursor: 'pointer' }}>
           <h3>HectoClash</h3>
         </div>
         

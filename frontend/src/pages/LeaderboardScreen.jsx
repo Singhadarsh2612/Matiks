@@ -44,7 +44,7 @@ const LeaderboardScreen = () => {
 
       const sorted = Object.values(userStats)
         .map((player) => {
-          const rating = 0 + (player.wins * 30) - (player.losses * 10) + (player.played * 2);
+          const rating = 500 + (player.wins * 30) - (player.losses * 10) + (player.played * 2);
           const winRate = player.played === 0 ? 0 : Math.round((player.wins / player.played) * 100);
           return { ...player, rating, winRate };
         })
