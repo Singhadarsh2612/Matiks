@@ -24,32 +24,31 @@ const LeaderboardScreen = () => {
         const opponent = game.opponent || 'Unknown';
         const result = game.result;
 
-        // Track opponent
+        // Opponent stats
         if (!userStats[opponent]) {
-          userStats[opponent] = { name: opponent, played: 0, wins: 0 };
+          userStats[opponent] = { name: opponent, played: 0, wins: 0, losses: 0 };
         }
         userStats[opponent].played++;
-        if (result === 'Loss') {
-          userStats[opponent].wins++;
-        }
+        if (result === 'Loss') userStats[opponent].wins++;
+        else if (result === 'Win') userStats[opponent].losses++;
 
-        // Track current user too
+        // Current user stats
         const currentUser = userInfo.name || 'You';
         if (!userStats[currentUser]) {
-          userStats[currentUser] = { name: currentUser, played: 0, wins: 0 };
+          userStats[currentUser] = { name: currentUser, played: 0, wins: 0, losses: 0 };
         }
         userStats[currentUser].played++;
-        if (result === 'Win') {
-          userStats[currentUser].wins++;
-        }
+        if (result === 'Win') userStats[currentUser].wins++;
+        else if (result === 'Loss') userStats[currentUser].losses++;
       });
 
       const sorted = Object.values(userStats)
-        .map((player) => ({
-          ...player,
-          winRate: player.played === 0 ? 0 : Math.round((player.wins / player.played) * 100),
-        }))
-        .sort((a, b) => b.winRate - a.winRate);
+        .map((player) => {
+          const rating = 0 + (player.wins * 30) - (player.losses * 10) + (player.played * 2);
+          const winRate = player.played === 0 ? 0 : Math.round((player.wins / player.played) * 100);
+          return { ...player, rating, winRate };
+        })
+        .sort((a, b) => b.rating - a.rating);
 
       setLeaderboard(sorted);
     }
@@ -84,6 +83,7 @@ const LeaderboardScreen = () => {
                   <th>Player</th>
                   <th>Wins</th>
                   <th>Win Rate</th>
+                  <th>Rating</th>
                 </tr>
               </thead>
               <tbody>
@@ -102,6 +102,7 @@ const LeaderboardScreen = () => {
                     <td>{player.name}</td>
                     <td>{player.wins}</td>
                     <td>{player.winRate}%</td>
+                    <td>{player.rating}</td>
                   </tr>
                 ))}
               </tbody>

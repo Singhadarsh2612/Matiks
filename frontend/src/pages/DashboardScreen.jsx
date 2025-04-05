@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import GameHistory from "../screens/GameHistory";
 const Dashboard = () => {
     const { userInfo } = useSelector((state) => state.auth);
+    const { history } = useSelector((state) => state.gameHistory);
+
   const user = {
     name: "Adarsh Kumar Singh",
     email: "adarsh@example.com",
@@ -88,7 +90,29 @@ const Dashboard = () => {
     backgroundColor: "#f7f7f7",
     fontWeight: "bold"
   };
-
+  const calculateRating = () => {
+    if (!userInfo || history.length === 0) return 500; // default base
+  
+    let played = 0;
+    let wins = 0;
+    let losses = 0;
+  
+    history.forEach((game) => {
+      if (!game || !game.result || !game.opponent) return;
+  
+      // The current user is the one viewing the dashboard
+      played++;
+  
+      if (game.result === "Win") wins++;
+      else if (game.result === "Loss") losses++;
+    });
+  
+    // You can adjust this formula however you like
+    const rating = 500 + wins * 30 - losses * 10 + played * 2;
+  
+    return Math.max(0, Math.round(rating)); // No negative ratings
+  };
+  
   return (
     <div style={containerStyle}>
       <div style={cardStyle}>
@@ -97,7 +121,7 @@ const Dashboard = () => {
           <div style={nameStyle}>{userInfo.name}</div>
           <div style={emailStyle}>{userInfo.email}</div>
           <div style={ratingStyle}>
-            {user.rating}
+            {calculateRating()}
             <span style={starStyle}>⭐</span>
           </div>
         </div>
