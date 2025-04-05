@@ -1,0 +1,279 @@
+/* // src/styles/components.css */
+/* Header styles */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  h1 {
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+  }
+  
+  .subtitle {
+    color: var(--primary);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Introduction styles */
+  .intro {
+    background-color: black;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .intro h2 {
+    color: var(--secondary);
+    margin-bottom: 1rem;
+  }
+  
+  .intro p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+  
+  .example {
+    background-color: var(--light);
+    border-left: 4px solid var(--accent);
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .operations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  
+  .operation {
+    background-color: var(--accent);
+    color: black;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  /* Start button */
+  .start-btn {
+    background-color: var(--primary);
+    color: black;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto;
+    transition: background-color 0.3s;
+  }
+  
+  .start-btn:hover {
+    background-color: var(--secondary);
+  }
+  
+  /* Game container */
+  .game-container {
+    background-color: black;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    width: 100%;
+    margin-top: 2rem;
+  }
+  
+  .game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  /* Timer */
+  .timer {
+    background-color: var(--secondary);
+    color: black;
+    padding: 0.7rem 1rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  /* Digits display */
+  .digits-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    color: black;
+  }
+  
+  .digit {
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary);
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 10px;
+  }
+  
+  /* Input container */
+  .input-container {
+    margin-bottom: 2rem;
+  }
+  
+  .expression-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 2px solid var(--primary);
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
+  
+  .hint {
+    color: var(--secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Operation tools */
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tool-btn {
+    background-color: var(--light);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .tool-btn:hover {
+    background-color: var(--primary);
+    color: black;
+  }
+  
+  /* Check button */
+  .check-btn {
+    background-color: var(--accent);
+    color: black;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    transition: background-color 0.3s;
+    margin-bottom: 1rem;
+  }
+  
+  .check-btn:hover {
+    background-color: var(--secondary);
+  }
+  
+  /* Result display */
+  .result {
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .correct {
+    background-color: var(--success);
+    color: black;
+  }
+  
+  .incorrect {
+    background-color: var(--danger);
+    color: black;
+  }
+  
+  /* Solution display */
+  .solution-display {
+    background-color: var(--light);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid var(--secondary);
+  }
+  
+  .solution-display h3 {
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Button group */
+  .buttons-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .new-game-btn, .give-up-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 1;
+    border: none;
+  }
+  
+  .new-game-btn {
+    background-color: var(--primary);
+    color: black;
+  }
+  
+  .give-up-btn {
+    background-color: var(--light);
+    color: var(--danger);
+    border: 1px solid var(--danger);
+  }
+  
+  .new-game-btn:hover {
+    background-color: var(--secondary);
+  }
+  
+  .give-up-btn:hover {
+    background-color: var(--danger);
+    color: black;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .digits-container {
+      gap: 0.4rem;
+    }
+    
+    .digit {
+      width: 40px;
+      height: 40px;
+      font-size: 1.5rem;
+    }
+    
+    .game-header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .buttons-container {
+      flex-direction: column;
+    }
+  }
