@@ -1,58 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchGameHistory } from '../slices/gameHistorySlice';
+import { useSelector } from 'react-redux';
 import { Card, Table, Badge, Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const LeaderboardScreen = () => {
-  const dispatch = useDispatch();
-  const { history, loading, error } = useSelector((state) => state.gameHistory);
   const { userInfo } = useSelector((state) => state.auth);
 
   const [leaderboard, setLeaderboard] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (userInfo && userInfo._id) {
-      dispatch(fetchGameHistory());
-    }
-  }, [dispatch, userInfo]);
+    const fetchLeaderboard = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get('/api/users/leaderboard');
+        setLeaderboard(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => {
-    if (!loading && history.length > 0 && userInfo) {
-      const userStats = {};
-
-      history.forEach((game) => {
-        const opponent = game.opponent || 'Unknown';
-        const result = game.result;
-
-        // Opponent stats
-        if (!userStats[opponent]) {
-          userStats[opponent] = { name: opponent, played: 0, wins: 0, losses: 0 };
-        }
-        userStats[opponent].played++;
-        if (result === 'Loss') userStats[opponent].wins++;
-        else if (result === 'Win') userStats[opponent].losses++;
-
-        // Current user stats
-        const currentUser = userInfo.name || 'You';
-        if (!userStats[currentUser]) {
-          userStats[currentUser] = { name: currentUser, played: 0, wins: 0, losses: 0 };
-        }
-        userStats[currentUser].played++;
-        if (result === 'Win') userStats[currentUser].wins++;
-        else if (result === 'Loss') userStats[currentUser].losses++;
-      });
-
-      const sorted = Object.values(userStats)
-        .map((player) => {
-          const rating = 500 + (player.wins * 30) - (player.losses * 10) + (player.played * 2);
-          const winRate = player.played === 0 ? 0 : Math.round((player.wins / player.played) * 100);
-          return { ...player, rating, winRate };
-        })
-        .sort((a, b) => b.rating - a.rating);
-
-      setLeaderboard(sorted);
-    }
-  }, [history, loading, userInfo]);
+    fetchLeaderboard();
+  }, []);
 
   return (
     <>
@@ -63,8 +35,8 @@ const LeaderboardScreen = () => {
           <div className="d-flex justify-content-between mb-3">
             <Card.Title>Top Players</Card.Title>
             <div>
-              {leaderboard.map((p, i) => p.name === userInfo.name && (
-                <Badge key={p.name} bg="info" className="me-2">
+              {leaderboard.map((p, i) => p.name === userInfo?.name && (
+                <Badge key={p._id} bg="info" className="me-2">
                   Your Rank: #{i + 1}
                 </Badge>
               ))}
@@ -88,7 +60,7 @@ const LeaderboardScreen = () => {
               </thead>
               <tbody>
                 {leaderboard.map((player, index) => (
-                  <tr key={player.name}>
+                  <tr key={player._id}>
                     <td>
                       {index + 1 <= 3 ? (
                         <span className="fw-bold">
