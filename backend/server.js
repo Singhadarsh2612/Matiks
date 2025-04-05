@@ -9,6 +9,42 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import User from './models/userModel.js'; // ✅ Import User model
 
+import fs from 'fs';
+
+import { fileURLToPath } from 'url';
+
+
+
+// Fix __dirname in ES Modules
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+
+
+// ✅ Correct path to sequences.json
+
+const sequencesPath = path.join(__dirname, 'data', 'sequences.json');
+
+const sequences = JSON.parse(fs.readFileSync(sequencesPath, 'utf-8'));
+
+
+
+
+
+
+
+function getRandomSequence() {
+
+  const keys = Object.keys(sequences);
+
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+
+  return sequences[randomKey];
+
+}
+
 
 dotenv.config();
 connectDB();
@@ -45,11 +81,11 @@ if (process.env.NODE_ENV === 'production') {
         res.send('API is running....');
     });
 }
-
+let waitingPair = [];
 // Socket.io Game Logic
 const users = {}; // Store users with socket ID mapping
 const games = {}; // Store game sessions
-let waitingPair = [];
+
 
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
@@ -65,90 +101,93 @@ io.on("connection", (socket) => {
         console.log(`Game created: ${gameId} by ${username}`);
     });
     
-    socket.on("findPair", (username) => {
-        if (waitingPair.length > 0) {
-            const waitingPlayer = waitingPair.shift();
-            const pairRoom = Math.random().toString(36).substr(2, 6);
     
-            socket.join(pairRoom);
-            waitingPlayer.socket.join(pairRoom);
-    
-            const a = Math.floor(Math.random() * 10);
-            const b = Math.floor(Math.random() * 10);
-            const question = `${a} + ${b}`;
-            const correctAnswer = a + b;
-    
-            games[pairRoom] = {
-                players: [
-                    { id: waitingPlayer.socket.id, username: waitingPlayer.username },
-                    { id: socket.id, username }
-                ],
-                gameStarted: true,
-                mathProblem: { question, correctAnswer }
-            };
-    
-            users[socket.id] = { username, gameId: pairRoom };
-            users[waitingPlayer.socket.id] = { username: waitingPlayer.username, gameId: pairRoom };
-    
-            io.to(pairRoom).emit("pairFound", {
-                room: pairRoom,
-                players: [waitingPlayer.username, username],
-                message: "Pair found! Game is starting...",
-                mathProblem: question,
-            });
-    
-            console.log(`Pair matched: ${waitingPlayer.username} & ${username} in room ${pairRoom}`);
-        } else {
-            waitingPair.push({ socket, username });
-            socket.emit("waitingForPair", { message: "Finding a pair, please wait..." });
-            console.log(`${username} is waiting for a pair...`);
-        }
-    });
     
     socket.on("joinGame", ({ gameId, username }) => {
+
         if (!games[gameId]) {
-            socket.emit("errorMessage", "Game not found.");
-            return;
+
+          socket.emit("errorMessage", "Game not found.");
+
+          return;
+
         }
+
+      
 
         if (games[gameId].players.length >= 2) {
-            socket.emit("errorMessage", "Lobby is full. Cannot join.");
-            return;
+
+          socket.emit("errorMessage", "Lobby is full. Cannot join.");
+
+          return;
+
         }
+
+      
 
         if (users[socket.id]?.gameId) {
-            const oldGameId = users[socket.id].gameId;
-            games[oldGameId].players = games[oldGameId].players.filter(player => player.id !== socket.id);
 
-            if (games[oldGameId].players.length === 0) {
-                delete games[oldGameId];
-            } else {
-                io.to(oldGameId).emit("gameJoined", { gameId: oldGameId, players: games[oldGameId].players });
-            }
+          const oldGameId = users[socket.id].gameId;
 
-            socket.leave(oldGameId);
-            console.log(`${username} left game: ${oldGameId}`);
+          games[oldGameId].players = games[oldGameId].players.filter(player => player.id !== socket.id);
+
+      
+
+          if (games[oldGameId].players.length === 0) {
+
+            delete games[oldGameId];
+
+          } else {
+
+            io.to(oldGameId).emit("gameJoined", { gameId: oldGameId, players: games[oldGameId].players });
+
+          }
+
+      
+
+          socket.leave(oldGameId);
+
+          console.log(`${username} left game: ${oldGameId}`);
+
         }
 
+      
+
         games[gameId].players.push({ id: socket.id, username });
+
         users[socket.id] = { username, gameId };
 
+      
+
         socket.join(gameId);
+
         io.to(gameId).emit("gameJoined", { gameId, players: games[gameId].players });
+
+      
 
         console.log(`${username} joined game: ${gameId}`);
 
-        // Start the game when two players are present
-        if (games[gameId].players.length === 2 && !games[gameId].gameStarted) {
-            games[gameId].gameStarted = true;
-            const a = Math.floor(Math.random() * 10);
-            const b = Math.floor(Math.random() * 10);
-            const question = `${a} + ${b}`;
-            const correctAnswer = a + b;
-            games[gameId].mathProblem = { question, correctAnswer };
-            io.to(gameId).emit("startGame", { message: "Solve the math problem", mathProblem: question });
+      
+
+        // Start game immediately when second player joins
+
+        if (games[gameId].players.length === 2) {
+
+          const sequence = getRandomSequence();
+
+          games[gameId].sequence = sequence;
+
+          games[gameId].gameStarted = true;
+
+          games[gameId].startTime = Date.now();
+
+          io.to(gameId).emit("startGame", { sequence });
+
         }
-    });
+
+      });
+
+
 
     socket.on("solveMath", async ({ gameId, username, answer }) => {
         if (!games[gameId] || games[gameId].winner) return;
@@ -209,6 +248,273 @@ io.on("connection", (socket) => {
             }
         }
     });
+
+    socket.on("findPair", async (username) => {
+
+        if (waitingPair.length > 0) {
+
+          const waitingPlayer = waitingPair.shift();
+
+          const pairRoom = Math.random().toString(36).substr(2, 6);
+
+          socket.join(pairRoom);
+
+          waitingPlayer.socket.join(pairRoom);
+
+      
+
+          const sequence = getRandomSequence();
+
+          const players = [
+
+            { id: waitingPlayer.socket.id, username: waitingPlayer.username },
+
+            { id: socket.id, username }
+
+          ];
+
+      
+
+          users[waitingPlayer.socket.id] = { username: waitingPlayer.username, gameId: pairRoom };
+
+          users[socket.id] = { username, gameId: pairRoom };
+
+      
+
+          games[pairRoom] = {
+
+            players,
+
+            gameStarted: true,
+
+            sequence,
+
+            winner: null,
+
+            startTime: Date.now()
+
+          };
+
+      
+
+          io.to(pairRoom).emit("pairFound", {
+
+            room: pairRoom,
+
+            players: [waitingPlayer.username, username],
+
+            sequence
+
+          });
+
+        } else {
+
+          waitingPair.push({ socket, username });
+
+          socket.emit("waitingForPair", { message: "Finding a pair, please wait..." });
+
+        }
+
+      });
+
+    
+
+
+
+      socket.on("submitExpression", async ({ gameId, expression, username }) => {
+
+        const game = games[gameId];
+
+        if (!game || game.winner) return;
+
+      
+
+        console.log(`[SUBMIT] Received expression: ${expression} from ${username} in game: ${gameId}`);
+
+      
+
+        try {
+
+          // Sanitize the expression (keep existing sanitization)
+
+          const sanitizedExpression = expression
+
+            .replace(/×/g, '*')
+
+            .replace(/÷/g, '/')
+
+            .replace(/[−–]/g, '-')
+
+            .replace(/=/g, '')
+
+            .replace(/\s+/g, '')
+
+            .trim();
+
+      
+
+          // Existing validation checks (keep these exactly as is)
+
+          const openParens = (sanitizedExpression.match(/\(/g) || []).length;
+
+          const closeParens = (sanitizedExpression.match(/\)/g) || []).length;
+
+          
+
+          if (openParens !== closeParens) {
+
+            throw new Error("Unbalanced parentheses");
+
+          }
+
+      
+
+          if (!/^[\d+\-*/().]+$/.test(sanitizedExpression)) {
+
+            throw new Error("Invalid characters in expression");
+
+          }
+
+      
+
+          // Evaluation (keep existing eval)
+
+          const result = eval(sanitizedExpression);
+
+          console.log(`[EVAL] Result: ${result}`);
+
+      
+
+          if (result === 100) {
+
+            game.winner = username;
+
+            game.endTime = Date.now();
+
+      
+
+            // Keep existing game history update code exactly as is
+
+            try {
+
+              const winner = await User.findOne({ name: username });
+
+              const otherPlayer = game.players.find(p => p.username !== username);
+
+              const loser = otherPlayer ? await User.findOne({ name: otherPlayer.username }) : null;
+
+      
+
+              if (winner) {
+
+                winner.gameHistory.push({
+
+                  opponent: loser ? loser.name : "Unknown",
+
+                  result: 'Win',
+
+                  sequence: game.sequence.sequence,
+
+                  expressionUsed: expression,
+
+                  date: new Date(),
+
+                  gameDuration: (game.endTime - game.startTime) / 1000 + ' seconds'
+
+                });
+
+                await winner.save();
+
+              }
+
+      
+
+              if (loser) {
+
+                loser.gameHistory.push({
+
+                  opponent: username,
+
+                  result: 'Loss',
+
+                  sequence: game.sequence.sequence,
+
+                  expressionUsed: '',
+
+                  date: new Date(),
+
+                  gameDuration: (game.endTime - game.startTime) / 1000 + ' seconds'
+
+                });
+
+                await loser.save();
+
+              }
+
+      
+
+              console.log('✅ Game history updated for both players');
+
+            } catch (err) {
+
+              console.error('❌ Error updating game history:', err);
+
+            }
+
+      
+
+            // Modified emit to include solution
+
+            io.to(gameId).emit("gameResult", { 
+
+              winner: username, 
+
+              expression,
+
+              solution: game.sequence.solution, // Add solution here
+
+              message: `${username} solved it first with: ${expression}`
+
+            });
+
+          } else {
+
+            // Modified to use expressionFeedback instead of invalidSolution
+
+            socket.emit("expressionFeedback", {
+
+              correct: false,
+
+              evaluatedResult: result,
+
+              message: `Incorrect! Evaluated to ${result}. Try again!`,
+
+              attemptsLeft: true
+
+            });
+
+          }
+
+        } catch (err) {
+
+          console.error("[ERROR] Invalid expression:", err.message);
+
+          // Modified to use expressionFeedback
+
+          socket.emit("expressionFeedback", {
+
+            correct: false,
+
+            message: `Invalid expression: ${err.message}`,
+
+            attemptsLeft: true
+
+          });
+
+        }
+
+      });
+
 
     socket.on("disconnect", () => {
         console.log(`User disconnected: ${socket.id}`);

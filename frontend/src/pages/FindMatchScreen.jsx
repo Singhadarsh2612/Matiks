@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import sequences from "../data/sequences.json";
 
-const socket = io("http://localhost:5001"); // Your backend URL
+const socket = io("http://localhost:5001");
 
 const GameLobby = () => {
   const navigate = useNavigate();
@@ -12,51 +13,144 @@ const GameLobby = () => {
   const [players, setPlayers] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
   const [winner, setWinner] = useState("");
-  const [mathProblem, setMathProblem] = useState("");
-  const [userAnswer, setUserAnswer] = useState("");
-  const [isFindingMatch, setIsFindingMatch] = useState(false);
+  const [sequenceData, setSequenceData] = useState({});
+  const [pairStatus, setPairStatus] = useState("");
+  const [pairRoom, setPairRoom] = useState("");
+  const [pairPlayers, setPairPlayers] = useState([]);
+  const [expression, setExpression] = useState("");
+  const [result, setResult] = useState({
+    show: false,
+    correct: false,
+    message: "",
+  });
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const [timerActive, setTimerActive] = useState(false);
+  const [attemptFeedback, setAttemptFeedback] = useState({
+    show: false,
+    message: "",
+    isCorrect: false,
+  });
+
+  const getRandomSequence = () => {
+    const sequenceKeys = Object.keys(sequences);
+    const randomKey =
+      sequenceKeys[Math.floor(Math.random() * sequenceKeys.length)];
+    return sequences[randomKey];
+  };
+
+  // Timer effect
+  // Timer effect
+  useEffect(() => {
+    let interval;
+    if (timerActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && timerActive) {
+      setTimerActive(false);
+      setResult({
+        show: true,
+        correct: false,
+        message: "Time's up! No winner this round.",
+        solution: sequenceData.solution, // Add solution here
+      });
+    }
+    return () => clearInterval(interval);
+  }, [timeLeft, timerActive]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  };
 
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
     }
 
-    // Reconnect user
     socket.emit("reconnectUser", userInfo.name);
 
     socket.on("gameCreated", ({ gameId, players }) => {
       setGameId(gameId);
       setPlayers(players);
-      setIsFindingMatch(false);
     });
 
     socket.on("gameJoined", ({ gameId, players }) => {
       setGameId(gameId);
       setPlayers(players);
-      setIsFindingMatch(false);
+      // Start timer when second player joins
+      if (players.length === 2) {
+        setTimeLeft(300);
+        setTimerActive(true);
+        const randomSequence = getRandomSequence();
+        setSequenceData(randomSequence);
+        setGameStarted(true);
+      }
     });
 
-    socket.on("startGame", ({ message, mathProblem }) => {
+    socket.on("startGame", ({ sequence }) => {
       setGameStarted(true);
-      setMathProblem(mathProblem);
-      setIsFindingMatch(false);
-      console.log(message);
+      setSequenceData(sequence);
+      setTimeLeft(300);
+      setTimerActive(true);
     });
 
     socket.on("gameOver", ({ winner }) => {
       setWinner(winner);
-    });
-
-    // Add this new event listener for match found
-    socket.on("matchFound", ({ gameId, players }) => {
-      setGameId(gameId);
-      setPlayers(players);
-      setIsFindingMatch(false);
+      setGameStarted(false);
+      setTimerActive(false);
+      const message =
+        winner === userInfo.name ? "🎉 You WON!" : `${winner} won the game!`;
+      setResult({ show: true, correct: true, message });
     });
 
     socket.on("errorMessage", (message) => {
       alert(message);
-      setIsFindingMatch(false);
+    });
+
+    socket.on("waitingForPair", ({ message }) => {
+      setPairStatus(message);
+    });
+
+    socket.on("pairFound", ({ room, players, sequence }) => {
+      setPairRoom(room);
+      setPairPlayers(players);
+      setPairStatus("Game started!");
+      setGameStarted(true);
+      setSequenceData(sequence);
+      setTimeLeft(300);
+      setTimerActive(true);
+    });
+
+    socket.on("validSolution", ({ message }) => {
+      setTimerActive(false);
+      setResult({ show: true, correct: true, message });
+    });
+
+    socket.on("invalidSolution", ({ message }) => {
+      setResult({ show: true, correct: false, message });
+    });
+
+    socket.on("gameResult", ({ winner, expression, solution }) => {
+      setTimerActive(false);
+      const message =
+        winner === userInfo.name
+          ? `🎉 You WON with: ${expression}`
+          : `${winner} won with: ${expression}`;
+      setResult({
+        show: true,
+        correct: true,
+        message,
+        solution: solution || sequenceData.solution, // Fallback to sequenceData.solution
+      });
+    });
+    socket.on("expressionFeedback", ({ message, evaluatedResult }) => {
+      setAttemptFeedback({
+        show: true,
+        message: `Your expression evaluated to ${evaluatedResult} instead of 100`,
+        isCorrect: false,
+      });
     });
 
     return () => {
@@ -64,59 +158,62 @@ const GameLobby = () => {
       socket.off("gameJoined");
       socket.off("startGame");
       socket.off("gameOver");
-      socket.off("matchFound");
       socket.off("errorMessage");
+      socket.off("waitingForPair");
+      socket.off("pairFound");
+      socket.off("invalidSolution");
+      socket.off("validSolution");
+      socket.off("gameResult");
+      socket.off("expressionFeedback");
     };
   }, [userInfo, navigate]);
 
   const createGame = () => {
     socket.emit("createGame", userInfo.name);
+    setTimeLeft(300);
   };
 
   const joinGame = () => {
     const enteredGameId = prompt("Enter Game ID:");
     if (enteredGameId) {
-      socket.emit("joinGame", { gameId: enteredGameId, username: userInfo.name });
+      socket.emit("joinGame", {
+        gameId: enteredGameId,
+        username: userInfo.name,
+      });
     }
   };
 
-  const findMatch = () => {
-    setIsFindingMatch(true);
-    socket.emit("findMatch", { username: userInfo.name });
+  const findPair = () => {
+    setPairStatus("Finding a pair...");
+    setPairRoom("");
+    setPairPlayers([]);
+    socket.emit("findPair", userInfo.name);
   };
 
-  const handleSubmit = () => {
-    socket.emit("solveMath", { gameId, username: userInfo.name, answer: userAnswer });
-    setUserAnswer("");
+  const submitExpression = () => {
+    if (expression.trim() === "") return;
+    setAttemptFeedback({ show: false, message: "", isCorrect: false });
+    socket.emit("submitExpression", {
+      gameId: pairRoom || gameId,
+      username: userInfo.name,
+      expression,
+    });
+    // Don't clear expression here to allow editing
   };
-
   return (
     <div className="container text-center">
       <h2>Welcome, {userInfo?.name}!</h2>
-      
-      <div className="d-flex justify-content-center flex-wrap my-3">
-        <button className="btn btn-primary m-2" onClick={createGame}>
-          Create Game
-        </button>
-        <button className="btn btn-success m-2" onClick={joinGame}>
-          Join Game
-        </button>
-        <button 
-          className="btn btn-info m-2" 
-          onClick={findMatch}
-          disabled={isFindingMatch}
-        >
-          {isFindingMatch ? "Finding Match..." : "Find a Match"}
-        </button>
-      </div>
+      {/* <button className="btn btn-primary m-2" onClick={createGame}>
+        Create Game
+      </button>
+      <button className="btn btn-success m-2" onClick={joinGame}>
+        Join Game
+      </button> */}
+      <button className="btn btn-warning m-2" onClick={findPair}>
+        Find a Pair
+      </button>
 
       {gameId && <h3 className="mt-3">Game ID: {gameId}</h3>}
-
-      {isFindingMatch && !gameId && (
-        <div className="alert alert-info mt-3">
-          Searching for an opponent... Please wait.
-        </div>
-      )}
 
       <h3>Players:</h3>
       <ul className="list-group">
@@ -127,29 +224,68 @@ const GameLobby = () => {
         ))}
       </ul>
 
-      {gameStarted && (
+      {(gameStarted || pairStatus) && (
         <div className="mt-4">
-          <h2>Math Problem:</h2>
-          <h3>{mathProblem}</h3>
-          {winner ? (
-            <h1>{winner === userInfo.name ? "You Win!" : `${winner} wins!`}</h1>
-          ) : (
-            <div className="mt-3">
+          {timerActive && (
+            <div className="timer-container mb-3">
+              <h3>Time Remaining: {formatTime(timeLeft)}</h3>
+            </div>
+          )}
+
+          {pairStatus && <h3>{pairStatus}</h3>}
+
+          {pairRoom && (
+            <div>
+              <p>Paired in room: {pairRoom}</p>
+              <p>Players: {pairPlayers.join(" & ")}</p>
+            </div>
+          )}
+
+          {sequenceData.sequence && (
+            <div className="challenge-container mt-3">
+              <h4>Sequence Challenge:</h4>
+              <p>Sequence: {sequenceData.sequence}</p>
+              {/* <p>Solution: {sequenceData.solution}</p> */}
               <input
                 type="text"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="Your Answer"
-                className="form-control d-inline-block w-auto"
+                className="form-control"
+                placeholder="Enter your expression"
+                value={expression}
+                onChange={(e) => setExpression(e.target.value)}
+                disabled={!timerActive || result.show}
               />
-              <button className="btn btn-warning ml-2" onClick={handleSubmit}>
-                Submit Answer
+              <button
+                className="btn btn-info mt-2"
+                onClick={submitExpression}
+                disabled={!timerActive || result.show}
+              >
+                Submit Expression
               </button>
+
+              {/* Show attempt feedback */}
+              {attemptFeedback.show && !attemptFeedback.isCorrect && (
+                <div className="alert alert-warning mt-2">
+                  {attemptFeedback.message}
+                </div>
+              )}
+
+              {/* Show final result */}
+              {result.show && (
+      <div className="mt-3">
+        <p className={result.correct ? "text-success" : "text-danger"}>
+          {result.message}
+        </p>
+        {result.solution && (
+          <div className="solution-box p-3 bg-light rounded mt-2">
+            <h5>Solution:</h5>
+            <p>{result.solution}</p>
+          </div>
+        )}
             </div>
           )}
         </div>
       )}
-    </div>
+    </div>)}</div>
   );
 };
 
