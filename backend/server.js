@@ -322,197 +322,110 @@ io.on("connection", (socket) => {
 
 
       socket.on("submitExpression", async ({ gameId, expression, username }) => {
-
         const game = games[gameId];
-
         if (!game || game.winner) return;
-
       
-
         console.log(`[SUBMIT] Received expression: ${expression} from ${username} in game: ${gameId}`);
-
       
-
         try {
-
           // Sanitize the expression (keep existing sanitization)
-
           const sanitizedExpression = expression
-
             .replace(/×/g, '*')
-
             .replace(/÷/g, '/')
-
             .replace(/[−–]/g, '-')
-
             .replace(/=/g, '')
-
             .replace(/\s+/g, '')
-
             .trim();
-
       
-
+          // ✅ NEW: Check if digits match the sequence in order
+          const extractDigits = str => str.replace(/[^\d]/g, '');
+          const expressionDigits = extractDigits(sanitizedExpression);
+          const sequenceDigits = extractDigits(game.sequence.sequence);
+      
+          if (expressionDigits !== sequenceDigits) {
+            throw new Error(`Digits in expression do not match the sequence "${game.sequence.sequence}"`);
+          }
+      
           // Existing validation checks (keep these exactly as is)
-
           const openParens = (sanitizedExpression.match(/\(/g) || []).length;
-
           const closeParens = (sanitizedExpression.match(/\)/g) || []).length;
-
           
-
           if (openParens !== closeParens) {
-
             throw new Error("Unbalanced parentheses");
-
           }
-
       
-
           if (!/^[\d+\-*/().]+$/.test(sanitizedExpression)) {
-
             throw new Error("Invalid characters in expression");
-
           }
-
       
-
           // Evaluation (keep existing eval)
-
           const result = eval(sanitizedExpression);
-
           console.log(`[EVAL] Result: ${result}`);
-
       
-
           if (result === 100) {
-
             game.winner = username;
-
             game.endTime = Date.now();
-
       
-
             // Keep existing game history update code exactly as is
-
             try {
-
               const winner = await User.findOne({ name: username });
-
               const otherPlayer = game.players.find(p => p.username !== username);
-
               const loser = otherPlayer ? await User.findOne({ name: otherPlayer.username }) : null;
-
       
-
               if (winner) {
-
                 winner.gameHistory.push({
-
                   opponent: loser ? loser.name : "Unknown",
-
                   result: 'Win',
-
                   sequence: game.sequence.sequence,
-
                   expressionUsed: expression,
-
                   date: new Date(),
-
                   gameDuration: (game.endTime - game.startTime) / 1000 + ' seconds'
-
                 });
-
                 await winner.save();
-
               }
-
       
-
               if (loser) {
-
                 loser.gameHistory.push({
-
                   opponent: username,
-
                   result: 'Loss',
-
                   sequence: game.sequence.sequence,
-
                   expressionUsed: '',
-
                   date: new Date(),
-
                   gameDuration: (game.endTime - game.startTime) / 1000 + ' seconds'
-
                 });
-
                 await loser.save();
-
               }
-
       
-
               console.log('✅ Game history updated for both players');
-
             } catch (err) {
-
               console.error('❌ Error updating game history:', err);
-
             }
-
       
-
             // Modified emit to include solution
-
             io.to(gameId).emit("gameResult", { 
-
               winner: username, 
-
               expression,
-
               solution: game.sequence.solution, // Add solution here
-
               message: `${username} solved it first with: ${expression}`
-
             });
-
           } else {
-
             // Modified to use expressionFeedback instead of invalidSolution
-
             socket.emit("expressionFeedback", {
-
               correct: false,
-
               evaluatedResult: result,
-
               message: `Incorrect! Evaluated to ${result}. Try again!`,
-
               attemptsLeft: true
-
             });
-
           }
-
         } catch (err) {
-
           console.error("[ERROR] Invalid expression:", err.message);
-
           // Modified to use expressionFeedback
-
           socket.emit("expressionFeedback", {
-
             correct: false,
-
             message: `Invalid expression: ${err.message}`,
-
             attemptsLeft: true
-
           });
-
         }
-
       });
 
 
