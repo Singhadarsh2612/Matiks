@@ -1,0 +1,172 @@
+.game-lobby {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    padding: 2rem;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  
+  .game-lobby-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #00f2fe, #4facfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 2rem;
+  }
+  
+  .find-pair-btn {
+    background: linear-gradient(45deg, #ff512f, #dd2476);
+    border: none;
+    padding: 1rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin: 1.5rem 0;
+  }
+  
+  .find-pair-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(221, 36, 118, 0.4);
+  }
+  
+  .players-list {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .player-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1.5rem;
+    margin: 0.5rem 0;
+    border-radius: 10px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .player-item::before {
+    content: "👾";
+    font-size: 1.2rem;
+  }
+  
+  .game-status {
+    font-size: 1.2rem;
+    color: #4facfe;
+    margin: 1rem 0;
+  }
+  
+  .timer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #00f2fe;
+    text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+    margin: 1rem 0;
+  }
+  
+  .challenge-section {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .sequence-display {
+    font-size: 1.8rem;
+    font-family: 'Courier New', monospace;
+    color: #4facfe;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+  }
+  
+  .expression-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    color: white;
+    margin: 1rem 0;
+  }
+  
+  .expression-input:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 10px rgba(79, 172, 254, 0.3);
+  }
+  
+  .submit-btn {
+    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+  }
+  
+  .submit-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .feedback {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  
+  .feedback.success {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+  }
+  
+  .feedback.error {
+    background: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+  }
+  
+  .solution-reveal {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .solution-reveal h4 {
+    color: #4facfe;
+    margin-bottom: 1rem;
+  }
+  
+  .solution-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #00f2fe;
+  }

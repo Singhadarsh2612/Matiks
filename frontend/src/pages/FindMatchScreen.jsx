@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import sequences from "../data/sequences.json";
+import "./FindMatchScreen.css";
 
 const socket = io("http://localhost:5001");
 
@@ -201,92 +202,92 @@ const GameLobby = () => {
     // Don't clear expression here to allow editing
   };
   return (
-    <div className="container text-center">
-      <h2>Welcome, {userInfo?.name}!</h2>
-      {/* <button className="btn btn-primary m-2" onClick={createGame}>
-        Create Game
-      </button>
-      <button className="btn btn-success m-2" onClick={joinGame}>
-        Join Game
-      </button> */}
-      <button className="btn btn-warning m-2" onClick={findPair}>
-        Find a Pair
-      </button>
-
-      {gameId && <h3 className="mt-3">Game ID: {gameId}</h3>}
-
-      <h3>Players:</h3>
-      <ul className="list-group">
-        {players.map((player, index) => (
-          <li key={index} className="list-group-item">
-            {player.username}
-          </li>
-        ))}
-      </ul>
-
-      {(gameStarted || pairStatus) && (
-        <div className="mt-4">
-          {timerActive && (
-            <div className="timer-container mb-3">
-              <h3>Time Remaining: {formatTime(timeLeft)}</h3>
-            </div>
-          )}
-
-          {pairStatus && <h3>{pairStatus}</h3>}
-
-          {pairRoom && (
-            <div>
-              <p>Paired in room: {pairRoom}</p>
-              <p>Players: {pairPlayers.join(" & ")}</p>
-            </div>
-          )}
-
-          {sequenceData.sequence && (
-            <div className="challenge-container mt-3">
-              <h4>Sequence Challenge:</h4>
-              <p>Sequence: {sequenceData.sequence}</p>
-              {/* <p>Solution: {sequenceData.solution}</p> */}
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter your expression"
-                value={expression}
-                onChange={(e) => setExpression(e.target.value)}
-                disabled={!timerActive || result.show}
-              />
-              <button
-                className="btn btn-info mt-2"
-                onClick={submitExpression}
-                disabled={!timerActive || result.show}
-              >
-                Submit Expression
-              </button>
-
-              {/* Show attempt feedback */}
-              {attemptFeedback.show && !attemptFeedback.isCorrect && (
-                <div className="alert alert-warning mt-2">
-                  {attemptFeedback.message}
+        <div className="game-lobby">
+          <div className="game-lobby-container">
+            <h2 className="welcome-title">Welcome, {userInfo?.name}! 🎮</h2>
+            
+            <button className="find-pair-btn" onClick={findPair}>
+              Find a Pair
+            </button>
+    
+            {gameId && <h3 className="game-status">Game ID: {gameId}</h3>}
+    
+            <div className="players-list">
+              <h3>Players</h3>
+              {players.map((player, index) => (
+                <div key={index} className="player-item">
+                  {player.username}
                 </div>
-              )}
-
-              {/* Show final result */}
-              {result.show && (
-      <div className="mt-3">
-        <p className={result.correct ? "text-success" : "text-danger"}>
-          {result.message}
-        </p>
-        {result.solution && (
-          <div className="solution-box p-3 bg-light rounded mt-2">
-            <h5>Solution:</h5>
-            <p>{result.solution}</p>
-          </div>
-        )}
+              ))}
             </div>
-          )}
+    
+            {(gameStarted || pairStatus) && (
+              <div className="challenge-section">
+                {timerActive && (
+                  <div className="timer">
+                    ⏱️ {formatTime(timeLeft)}
+                  </div>
+                )}
+    
+                {pairStatus && <h3 className="game-status">{pairStatus}</h3>}
+    
+                {pairRoom && (
+                  <div className="game-status">
+                    <p>Room: {pairRoom}</p>
+                    <p>Players: {pairPlayers.join(" vs ")}</p>
+                  </div>
+                )}
+    
+                {sequenceData.sequence && (
+                  <div>
+                    <h4>Sequence Challenge</h4>
+                    <div className="sequence-display">
+                      {sequenceData.sequence}
+                    </div>
+                    
+                    <input
+                      type="text"
+                      className="expression-input"
+                      placeholder="Enter your expression"
+                      value={expression}
+                      onChange={(e) => setExpression(e.target.value)}
+                      disabled={!timerActive || result.show}
+                    />
+                    
+                    <button
+                      className="submit-btn"
+                      onClick={submitExpression}
+                      disabled={!timerActive || result.show}
+                    >
+                      Submit Expression
+                    </button>
+    
+                    {attemptFeedback.show && !attemptFeedback.isCorrect && (
+                      <div className="feedback error">
+                        {attemptFeedback.message}
+                      </div>
+                    )}
+    
+                    {result.show && (
+                      <div className="solution-reveal">
+                        <p className={result.correct ? "feedback success" : "feedback error"}>
+                          {result.message}
+                        </p>
+                        {result.solution && (
+                          <div>
+                            <h4>Solution</h4>
+                            <p className="solution-text">{result.solution}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      )}
-    </div>)}</div>
-  );
-};
+      );
+    };
 
 export default GameLobby;

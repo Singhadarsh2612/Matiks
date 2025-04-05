@@ -1,5 +1,5 @@
 import React from 'react'
-
+import "../pages/Practice.css";
 const ButtonGroup = ({ onNewGame, onGiveUp, showSolution }) => {
   return (
     <div className="buttons-container">

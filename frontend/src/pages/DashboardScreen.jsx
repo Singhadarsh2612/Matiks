@@ -19,13 +19,14 @@ const Dashboard = () => {
   ];
 
   const containerStyle = {
-    height: "100vh",
-    margin: 0,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f2f5"
+    
   };
+  const historyContainerStyle = {
+    maxHeight: "300px", // or adjust as needed
+    overflowY: "auto",
+    marginTop: "20px"
+  };
+    
 
   const cardStyle = {
     width: "90%",
