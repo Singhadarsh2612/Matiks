@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // You may want to centralize your socket connection in a separate file.
-const socket = io("http://localhost:5001");
+const socket = io("https://matiks-backend.onrender.com");
 
 const Game = () => {
   const { userInfo } = useSelector((state) => state.auth);

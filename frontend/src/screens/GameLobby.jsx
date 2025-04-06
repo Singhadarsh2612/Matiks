@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import sequences from "../data/sequences.json";
 import "./GameLobby.css";
 
-const socket = io("http://localhost:5001");
+const socket = io("https://matiks-backend.onrender.com");
 
 const GameLobby = () => {
   const navigate = useNavigate();
