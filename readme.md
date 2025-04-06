@@ -2,7 +2,8 @@
 
 A real-time, math-based duel game built using the **MERN stack** (MongoDB, Express, React, Node.js) with **Redux** for state management. Challenge your friends or compete with players around the world in fast-paced 1v1 math battles!
 
-![HectoClash Dashboard](screenshot.png)
+![HectoClash Landing Page](https://drive.google.com/file/d/1n9KsCtihqZvBJMbFrSbar869UHy_Qwwy/view?usp=drive_link)
+![Dashboard](https://drive.google.com/file/d/1iEo7e3B3QAJOEbweW0GUp2vxP4yBJMng/view?usp=drive_link)
 
 ---
 
