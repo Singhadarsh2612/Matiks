@@ -25,7 +25,7 @@ const GameHistory = () => {
   console.log('Current history state:', { history, sortedHistory, loading, error });
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4" style={{ color: "white" }}>
       <h2>Your Game History</h2>
 
       {loading && <div className="alert alert-info">Loading game history...</div>}
@@ -36,9 +36,9 @@ const GameHistory = () => {
       )}
 
       {!loading && !error && history.length > 0 && (
-        <div className="table-responsive">
-          <table className="table table-striped">
-            <thead className="thead-dark">
+        <div className="table-responsive" style={{ color: "white" }}>
+          <table className="table table-striped" style={{ color: "white" }}>
+            <thead className="thead-dark" >
               <tr>
                 <th>#</th>
                 <th>Opponent</th>
@@ -46,11 +46,11 @@ const GameHistory = () => {
                 <th>Date Played</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody style={{ color: "white" }}>
               {sortedHistory.map((item, index) => (
-                <tr key={item._id || index}>
-                  <td>{index + 1}</td>
-                  <td>{item.opponent || 'Unknown'}</td>
+                <tr key={item._id || index} style={{ color: "white" }}>
+                  <td style={{ color: "white" }}>{index + 1}</td>
+                  <td style={{ color: "white" }}>{item.opponent || 'Unknown'}</td>
                   <td>
                     <span className={`badge ${
                       item.result === 'Win' ? 'bg-success' : 
@@ -59,7 +59,7 @@ const GameHistory = () => {
                       {item.result || 'N/A'}
                     </span>
                   </td>
-                  <td>
+                  <td style={{ color: "white" }}>
                     {item.playedAt ? 
                       new Date(item.playedAt).toLocaleString() : 
                       'Date not available'}

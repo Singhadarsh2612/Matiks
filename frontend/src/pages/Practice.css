@@ -96,7 +96,7 @@ header {
   /* Timer */
   .timer {
     background-color: var(--secondary);
-    color: black;
+    color: white;
     padding: 0.7rem 1rem;
     border-radius: 50px;
     font-size: 1.2rem;
@@ -109,14 +109,14 @@ header {
     justify-content: center;
     gap: 0.8rem;
     margin-bottom: 2rem;
-    color: black;
+    color: white;
   }
   
   .digit {
     width: 60px;
     height: 60px;
     background-color: var(--primary);
-    color: black;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,7 +171,7 @@ header {
   /* Check button */
   .check-btn {
     background-color: var(--accent);
-    color: black;
+    color: white;
     border: none;
     padding: 1rem 2rem;
     font-size: 1.2rem;
@@ -198,12 +198,12 @@ header {
   
   .correct {
     background-color: var(--success);
-    color: black;
+    color: white;
   }
   
   .incorrect {
     background-color: var(--danger);
-    color: black;
+    color: white;
   }
   
   /* Solution display */
@@ -238,7 +238,7 @@ header {
   
   .new-game-btn {
     background-color: var(--primary);
-    color: black;
+    color: white;
   }
   
   .give-up-btn {
@@ -253,7 +253,7 @@ header {
   
   .give-up-btn:hover {
     background-color: var(--danger);
-    color: black;
+    color: gold;
   }
   
   /* Responsive design */

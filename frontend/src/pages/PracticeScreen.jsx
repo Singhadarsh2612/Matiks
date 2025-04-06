@@ -427,186 +427,285 @@ const problems = {
   
 
 const GameContainer = ({ onNewGame }) => {
-  const [digits, setDigits] = useState([])
-  const [timerActive, setTimerActive] = useState(false)
-  const [startTime, setStartTime] = useState(null)
-  const [elapsedTime, setElapsedTime] = useState(0)
-  const [expression, setExpression] = useState('')
-  const [result, setResult] = useState({ show: false, correct: false, message: '' })
-  const [solution, setSolution] = useState('')
-  const [showSolution, setShowSolution] = useState(false)
-  const timerRef = useRef(null)
-
-  useEffect(() => {
-    startNewGame()
-  }, [])
-
-  const startNewGame = () => {
-    const keys = Object.keys(problems)
-    const randomKey = keys[Math.floor(Math.random() * keys.length)]
-    const chosenProblem = problems[randomKey]
+    const [digits, setDigits] = useState([])
+    const [timerActive, setTimerActive] = useState(false)
+    const [startTime, setStartTime] = useState(null)
+    const [elapsedTime, setElapsedTime] = useState(0)
+    const [expression, setExpression] = useState('')
+    const [result, setResult] = useState({ show: false, correct: false, message: '' })
+    const [solution, setSolution] = useState('')
+    const [showSolution, setShowSolution] = useState(false)
+    const timerRef = useRef(null)
   
-    const digitArray = chosenProblem.sequence.split('').map(Number)
+    useEffect(() => {
+      startNewGame()
+    }, [])
   
-    setDigits(digitArray)
-    setSolution(chosenProblem.solution)
-    setExpression('')
-    setResult({ show: false, correct: false, message: '' })
-    setShowSolution(false)
-  
-    setStartTime(Date.now())
-    setElapsedTime(0)
-    setTimerActive(true)
-  
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-    }
-  }
-  
-
-  useEffect(() => {
-    if (timerActive) {
-      timerRef.current = setInterval(() => {
-        setElapsedTime(Date.now() - startTime)
-      }, 1000)
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current)
-    }
-
-    return () => {
+    const startNewGame = () => {
+      const keys = Object.keys(problems)
+      const randomKey = keys[Math.floor(Math.random() * keys.length)]
+      const chosenProblem = problems[randomKey]
+    
+      const digitArray = chosenProblem.sequence.split('').map(Number)
+    
+      setDigits(digitArray)
+      setSolution(chosenProblem.solution)
+      setExpression('')
+      setResult({ show: false, correct: false, message: '' })
+      setShowSolution(false)
+    
+      setStartTime(Date.now())
+      setElapsedTime(0)
+      setTimerActive(true)
+    
       if (timerRef.current) {
         clearInterval(timerRef.current)
       }
     }
-  }, [timerActive, startTime])
-
-  const checkSolution = () => {
-    if (!expression.trim()) {
-      setResult({
-        show: true,
-        correct: false,
-        message: "Please enter a solution."
-      })
-      return
-    }
-
-    if (!verifyDigitsOrder(expression, digits)) {
-      setResult({
-        show: true,
-        correct: false,
-        message: "You must use all digits in the correct order."
-      })
-      return
-    }
-
-    try {
-      const jsExpression = expression.replace(/\^/g, '**')
-      const value = eval(jsExpression)
-
-      if (value === 100) {
-        setResult({
-          show: true,
-          correct: true,
-          message: "Correct! Your solution equals 100!"
-        })
-        setTimerActive(false)
-      } else {
+    
+    useEffect(() => {
+      if (timerActive) {
+        timerRef.current = setInterval(() => {
+          setElapsedTime(Date.now() - startTime)
+        }, 1000)
+      } else if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+  
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current)
+        }
+      }
+    }, [timerActive, startTime])
+  
+    const checkSolution = () => {
+      if (!expression.trim()) {
         setResult({
           show: true,
           correct: false,
-          message: `Your solution equals ${value}, not 100.`
+          message: "Please enter a solution."
+        })
+        return
+      }
+  
+      if (!verifyDigitsOrder(expression, digits)) {
+        setResult({
+          show: true,
+          correct: false,
+          message: "You must use all digits in the correct order."
+        })
+        return
+      }
+  
+      try {
+        const jsExpression = expression.replace(/\^/g, '**')
+        const value = eval(jsExpression)
+  
+        if (value === 100) {
+          setResult({
+            show: true,
+            correct: true,
+            message: "Correct! Your solution equals 100!"
+          })
+          setTimerActive(false)
+        } else {
+          setResult({
+            show: true,
+            correct: false,
+            message: `Your solution equals ${value}, not 100.`
+          })
+        }
+      } catch (error) {
+        setResult({
+          show: true,
+          correct: false,
+          message: "Invalid expression. Please check your syntax."
         })
       }
-    } catch (error) {
+    }
+  
+    const handleGiveUp = () => {
+      setTimerActive(false)
+      setShowSolution(true)
       setResult({
         show: true,
         correct: false,
-        message: "Invalid expression. Please check your syntax."
+        message: "Here's a solution to this Hectoc puzzle."
       })
     }
-  }
-
-  const handleGiveUp = () => {
-    setTimerActive(false)
-    setShowSolution(true)
-    setResult({
-      show: true,
-      correct: false,
-      message: "Here's a solution to this Hectoc puzzle."
-    })
-  }
-  const styles = {
-    container: {
-      maxWidth: '600px',
-      margin: '0 auto',
-      padding: '20px',
-      borderRadius: '12px',
-      backgroundColor: '#f0f8ff',
-      boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)',
-      fontFamily: 'Arial, sans-serif',
-      textAlign: 'center'
-    },
-    header: {
-      marginBottom: '20px'
-    },
-    solutionDisplay: {
-      marginTop: '20px',
-      padding: '15px',
-      backgroundColor: '#fff8dc',
-      border: '1px solid #ffd700',
-      borderRadius: '8px'
-    },
-    title: {
-      fontSize: window.innerWidth < 480 ? '1.2rem' : '1.5rem',
-      marginBottom: '10px',
-      color: '#333'
-    },
-    solutionText: {
-      fontSize: window.innerWidth < 480 ? '0.95rem' : '1.1rem',
-      color: '#444'
+  
+    // Modern game UI styles
+    const styles = {
+      container: {
+        maxWidth: '700px',
+        margin: '0 auto',
+        padding: '25px',
+        borderRadius: '16px',
+        background: 'linear-gradient(145deg, #1c2340, #293462)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(66, 99, 235, 0.1)',
+        fontFamily: "'Poppins', sans-serif",
+        textAlign: 'center',
+        color: '#e0e6ff',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(66, 99, 235, 0.2)',
+        position: 'relative',
+        overflow: 'hidden',
+        zIndex: 1
+      },
+      header: {
+        marginBottom: '25px',
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      },
+      backgroundElement: {
+        position: 'absolute',
+        width: '150px',
+        height: '150px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(66, 99, 235, 0.15) 0%, rgba(66, 99, 235, 0) 70%)',
+        zIndex: -1
+      },
+      solutionDisplay: {
+        marginTop: '25px',
+        padding: '20px',
+        backgroundColor: 'rgba(66, 99, 235, 0.1)',
+        border: '1px solid rgba(66, 99, 235, 0.3)',
+        borderRadius: '12px',
+        animation: 'fadeIn 0.5s ease-out',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
+        position: 'relative',
+        overflow: 'hidden'
+      },
+      title: {
+        fontSize: window.innerWidth < 480 ? '1.4rem' : '1.7rem',
+        marginBottom: '0',
+        color: '#00dffc',
+        fontWeight: '600',
+        textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+        flex: '1',
+        textAlign: 'left'
+      },
+      solutionText: {
+        fontSize: window.innerWidth < 480 ? '1.1rem' : '1.3rem',
+        color: '#fff',
+        fontFamily: 'monospace',
+        textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+      },
+      solutionHeader: {
+        color: '#00dffc',
+        margin: '0 0 15px 0',
+        fontSize: '1.3rem',
+        fontWeight: '600',
+        textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+      },
+      targetNumber: {
+        display: 'inline-block',
+        backgroundColor: 'rgba(66, 99, 235, 0.15)',
+        borderRadius: '8px',
+        padding: '4px 12px',
+        color: '#00dffc',
+        fontWeight: 'bold',
+        marginLeft: '8px',
+        fontSize: '1.1rem',
+        border: '1px solid rgba(66, 99, 235, 0.3)'
+      },
+      sparkle: {
+        position: 'absolute',
+        width: '3px',
+        height: '3px',
+        backgroundColor: '#fff',
+        borderRadius: '50%',
+        boxShadow: '0 0 8px 2px rgba(255, 255, 255, 0.8)',
+        opacity: 0.7,
+        zIndex: -1
+      }
     }
+    
+    // Create 20 random sparkles for background effect
+    const sparkles = Array.from({ length: 20 }, (_, i) => ({
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      animationDelay: `${Math.random() * 5}s`,
+      animationDuration: `${3 + Math.random() * 5}s`
+    }))
+    
+    return (
+      <div style={styles.container}>
+        {/* Background design elements */}
+        <div style={{...styles.backgroundElement, top: '-50px', left: '-50px'}}></div>
+        <div style={{...styles.backgroundElement, bottom: '-30px', right: '-30px'}}></div>
+        <div style={{...styles.backgroundElement, top: '30%', right: '-70px'}}></div>
+        <div style={{...styles.backgroundElement, bottom: '20%', left: '-20px'}}></div>
+        
+        {/* Sparkle animations */}
+        {sparkles.map((sparkle, index) => (
+          <div 
+            key={index} 
+            style={{
+              ...styles.sparkle,
+              top: sparkle.top,
+              left: sparkle.left,
+              animation: `twinkle ${sparkle.animationDuration} infinite ${sparkle.animationDelay}`
+            }}
+          />
+        ))}
+        
+        <div style={styles.header}>
+          <h2 style={styles.title}>
+            Find <span style={styles.targetNumber}>100</span>
+          </h2>
+          <Timer elapsedTime={elapsedTime} />
+        </div>
+  
+        <DigitDisplay digits={digits} />
+  
+        <ExpressionInput
+          expression={expression}
+          setExpression={setExpression}
+          checkSolution={checkSolution}
+        />
+  
+        {result.show && (
+          <ResultDisplay correct={result.correct} message={result.message} />
+        )}
+  
+        {showSolution && (
+          <div style={styles.solutionDisplay}>
+            <h3 style={styles.solutionHeader}>Solution</h3>
+            <p style={styles.solutionText}>{solution}</p>
+          </div>
+        )}
+  
+        <ButtonGroup
+          onNewGame={startNewGame}
+          onGiveUp={handleGiveUp}
+          showSolution={showSolution}
+        />
+        
+        {/* Add CSS animations */}
+        <style jsx>{`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.5); }
+            100% { opacity: 0.2; transform: scale(1); }
+          }
+        `}</style>
+      </div>
+    )
   }
   
-  return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Find the solution</h2>
-        <Timer elapsedTime={elapsedTime} />
-      </div>
-
-      <DigitDisplay digits={digits} />
-
-      <ExpressionInput
-        expression={expression}
-        setExpression={setExpression}
-        checkSolution={checkSolution}
-      />
-
-      {result.show && (
-        <ResultDisplay correct={result.correct} message={result.message} />
-      )}
-
-      {showSolution && (
-        <div style={styles.solutionDisplay}>
-          <h3>Solution</h3>
-          <p style={styles.solutionText}>{solution}</p>
-        </div>
-      )}
-
-      <ButtonGroup
-        onNewGame={startNewGame}
-        onGiveUp={handleGiveUp}
-        showSolution={showSolution}
-      />
-    </div>
-  )
-}
-
-const verifyDigitsOrder = (expression, digits) => {
+  const verifyDigitsOrder = (expression, digits) => {
     const expressionDigits = expression.replace(/[^0-9]/g, '')
     const expectedDigits = digits.join('')
     return expressionDigits === expectedDigits
   }
   
-
-export default GameContainer
+  export default GameContainer
