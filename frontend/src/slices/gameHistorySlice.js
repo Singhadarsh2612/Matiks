@@ -8,15 +8,22 @@ export const fetchGameHistory = createAsyncThunk(
     try {
       const {
         auth: { userInfo },
-      } = getState(); // This assumes your auth slice stores the user info as `userInfo`
+      } = getState();
 
+      // Get token from userInfo (assuming it's stored there after login)
       const token = userInfo?.token;
+
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
 
       const { data } = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/api/users/profile/history`,
         {
-          
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token in headers
+          },
+          withCredentials: true, // Still include cookies if needed
         }
       );
 
@@ -32,7 +39,6 @@ export const fetchGameHistory = createAsyncThunk(
   }
 );
 
-
 // Slice
 const gameHistorySlice = createSlice({
   name: 'gameHistory',
@@ -43,9 +49,12 @@ const gameHistorySlice = createSlice({
     lastFetched: null 
   },
   reducers: {
-    // Optional: Add a manual clear error reducer
     clearError: (state) => {
       state.error = null;
+    },
+    // Optional: Add a reducer to manually update history
+    updateHistory: (state, action) => {
+      state.history = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -66,5 +75,5 @@ const gameHistorySlice = createSlice({
   },
 });
 
-export const { clearError } = gameHistorySlice.actions;
+export const { clearError, updateHistory } = gameHistorySlice.actions;
 export default gameHistorySlice.reducer;
