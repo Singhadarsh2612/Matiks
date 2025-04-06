@@ -1,62 +1,135 @@
-# MERN Authentication Starter
+# HectoClash 🧪⚡
 
-This is a starter app for a MERN stack application with authentication. This is for a SPA (Single Page Application) workflow that uses the [Vite](https://vite.dev) Build tool. This authentication workflow is based off of my [MERN Stack From Scratch | eCommerce](https://www.traversymedia.com/mern-stack-from-scratch) course.
+A real-time, math-based duel game built using the **MERN stack** (MongoDB, Express, React, Node.js) with **Redux** for state management. Challenge your friends or compete with players around the world in fast-paced 1v1 math battles!
 
-<img src="./frontend/public/screen.png" />
+![HectoClash Dashboard](screenshot.png)
 
-It includes the following:
+---
 
-- Backend API with Express & MongoDB
-- Routes for auth, logout, register, profile, update profile
-- JWT authentication stored in HTTP-only cookie
-- Protected routes and endpoints
-- Custom middleware to check JSON web token and store in cookie
-- Custom error middleware
-- React frontend to register, login, logout, view profile, and update profile
-- React Bootstrap UI library
-- React Toastify notifications
+## 🚀 Features
 
-## Usage
+- **🧠 1v1 Math Battles**: Compete live with friends or random opponents
+- **📈 Player Statistics**: Track your wins, losses, and win percentage
+- **📜 Game History**: Review your previous matches with timestamps
+- **👤 User Profiles**: Personalized dashboard with a star rating system
+- **🎮 Multiple Game Modes**:
+  - 🎯 **Find a Match** – Play with random players
+  - 👥 **Play With Friend** – Private duels using unique match links
+  - 🏋️ **Practice Mode** – Sharpen your skills in solo mode
+  - 🏆 **Leaderboard** – See where you stand globally!
 
-- Create a MongoDB database and obtain your `MongoDB URI` - [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register)
-- Create a PayPal account and obtain your `Client ID` - [PayPal Developer](https://developer.paypal.com/)
+---
 
-### Env Variables
+## 🛠️ Tech Stack
 
-Rename the `.env.example` file to `.env` and add the following
+### Frontend
+- [React.js](https://reactjs.org/) with Hooks
+- [Redux Toolkit](https://redux-toolkit.js.org/) for state management
+- [Bootstrap 5](https://getbootstrap.com/) for responsive UI
+- [Socket.IO](https://socket.io/) for real-time gameplay
 
+### Backend
+- [Node.js](https://nodejs.org/)
+- [Express.js](https://expressjs.com/)
+- [MongoDB](https://www.mongodb.com/) with Mongoose
+- [JWT](https://jwt.io/) for authentication
+- RESTful API design
+
+### DevOps
+- Local development setup
+- Ready for deployment on platforms like **Render**, **Vercel**, or **Heroku**
+
+---
+
+## 🧑‍💻 Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/hectoclash.git
+cd hectoclash
 ```
-NODE_ENV = development
-PORT = 5000
-MONGO_URI = your mongodb uri
-JWT_SECRET = 'abc123'
-```
 
-Change the JWT_SECRET to what you want
+### 2. Install Dependencies
 
-### Install Dependencies (frontend & backend)
-
-```
+#### Backend
+```bash
+cd backend
 npm install
-cd frontend
+```
+
+#### Frontend
+```bash
+cd ../frontend
 npm install
 ```
 
-### Run
+### 3. Configure Environment Variables
 
+Create a `.env` file in the `/backend` directory with the following:
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+PORT=5000
 ```
 
-# Run frontend (:3000) & backend (:5000)
-npm run dev
+### 4. Run the App
 
-# Run backend only
-npm run server
+In one terminal (backend):
+```bash
+cd backend
+npm start
 ```
 
-## Build & Deploy
-
-```
-# Create frontend prod build
+In another terminal (frontend):
+```bash
 cd frontend
-npm run build
+npm start
 ```
+
+---
+
+## 🎮 Gameplay Mechanics
+
+- Players are given math problems simultaneously
+- First to solve correctly gains more points
+- Stars reflect player performance and streaks
+- Win streaks give bonus multipliers
+- Player history and match stats are stored and visualized
+
+---
+
+## 🛿️ Future Roadmap
+
+- 🏁 Tournament Mode
+- 🔮 Power-ups and Special Abilities
+- 📱 Mobile App (React Native or Flutter)
+- 💬 In-game Chat & Friends System
+- 🧠 Advanced Math Problem Generator with Levels
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community!
+
+### To contribute:
+- Fork the repository
+- Create a new branch (`git checkout -b feature/your-feature`)
+- Commit your changes (`git commit -m 'Add your feature'`)
+- Push to the branch (`git push origin feature/your-feature`)
+- Open a pull request
+
+For major changes, please open an issue first to discuss what you’d like to change.
+
+---
+
+## 🌟 Show Your Support
+
+If you like the project, give it a ⭐ on [GitHub](https://github.com/your-username/hectoclash)!
+
+---
+
+## 🤛🏼 Maintainer
+
+**Adarsh Kumar Singh**  
+Feel free to reach out with feedback or suggestions!
