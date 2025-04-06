@@ -15,9 +15,7 @@ export const fetchGameHistory = createAsyncThunk(
       const { data } = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/api/users/profile/history`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          
           withCredentials: true,
         }
       );
