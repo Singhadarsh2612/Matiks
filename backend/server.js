@@ -61,9 +61,10 @@ const io = new Server(server, {
     },
 });
 app.use(cors({
-    origin: "https://matiks-frontend.onrender.com", // <-- Replace this
-    credentials: true
+    origin: 'https://hectoclash-h3l5xvx2l-singhadarsh2612s-projects.vercel.app',
+    credentials: true,
   }));
+  
   
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
