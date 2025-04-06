@@ -14,7 +14,7 @@ const LeaderboardScreen = () => {
     const fetchLeaderboard = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get('/api/users/leaderboard');
+        const { data } = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/api/users/leaderboard`);
         setLeaderboard(data);
         setLoading(false);
       } catch (err) {

@@ -6,9 +6,10 @@ export const fetchGameHistory = createAsyncThunk(
   'gameHistory/fetch',
   async (_, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get('/api/users/profile/history', { 
+      const { data } = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/api/users/profile/history`, { 
         withCredentials: true 
       });
+      
       
       // Handle both response formats:
       // 1. Direct array (your current backend)
