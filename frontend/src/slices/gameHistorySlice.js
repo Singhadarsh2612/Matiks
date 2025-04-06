@@ -4,27 +4,36 @@ import axios from 'axios';
 // Fetch game history
 export const fetchGameHistory = createAsyncThunk(
   'gameHistory/fetch',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/api/users/profile/history`, { 
-        withCredentials: true 
-      });
-      
-      
-      // Handle both response formats:
-      // 1. Direct array (your current backend)
-      // 2. Structured response (from my suggested backend changes)
+      const {
+        auth: { userInfo },
+      } = getState(); // This assumes your auth slice stores the user info as `userInfo`
+
+      const token = userInfo?.token;
+
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/api/users/profile/history`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+
       return Array.isArray(data) ? data : data.history || [];
-      
+
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.message || 
-        error.message || 
+        error.response?.data?.message ||
+        error.message ||
         'Failed to fetch game history'
       );
     }
   }
 );
+
 
 // Slice
 const gameHistorySlice = createSlice({
