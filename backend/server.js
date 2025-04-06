@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
 import User from './models/userModel.js'; // ✅ Import User model
-
+import cors from 'cors';
 import fs from 'fs';
 
 import { fileURLToPath } from 'url';
@@ -60,7 +60,11 @@ const io = new Server(server, {
         methods: ['GET', 'POST'],
     },
 });
-
+app.use(cors({
+    origin: "https://matiks-frontend.onrender.com", // <-- Replace this
+    credentials: true
+  }));
+  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
