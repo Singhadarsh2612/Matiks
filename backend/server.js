@@ -61,7 +61,7 @@ const io = new Server(server, {
     },
 });
 app.use(cors({
-    origin: 'https://hectoclash-h3l5xvx2l-singhadarsh2612s-projects.vercel.app',
+    origin: 'https://hectoclash-geh6jehnu-singhadarsh2612s-projects.vercel.app',
     credentials: true,
   }));
   
